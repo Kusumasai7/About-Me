@@ -37,7 +37,7 @@ app.post("/api/contact", async (req, res) => {
 
   try {
     let currentMessages = [];
-    
+
     try {
       const data = await fs.readFile(MESSAGES_FILE, "utf-8");
       currentMessages = JSON.parse(data);
@@ -52,7 +52,7 @@ app.post("/api/contact", async (req, res) => {
     await fs.writeFile(MESSAGES_FILE, JSON.stringify(currentMessages, null, 2));
 
     console.log(`[Message Received] From: ${name} (${email}) - Subject: ${subject}`);
-    
+
     return res.status(200).json({ success: true, message: "Inquiry saved successfully" });
   } catch (error) {
     console.error("Error writing database contact", error);

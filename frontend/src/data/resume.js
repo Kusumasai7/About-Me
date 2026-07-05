@@ -14,7 +14,7 @@ export const PROFILE = {
   phone: "+91 9390202368",
   email: "kusumasaithummuri@gmail.com",
   linkedin: "https://www.linkedin.com/in/kusumasai",
-  github: "https://github.com/kusumasaitummuri",
+  github: "https://github.com/Kusumasai7",
   resumeUrl:
     "https://customer-assets.emergentagent.com/job_01c23dd0-217f-4b1b-9bf7-3a0b89d40a65/artifacts/ipaj7dju_KUSUMA%20%282%29.docx",
   yearsOfExperience: "1+",
@@ -124,7 +124,7 @@ export const PROJECTS = [
       "Managed frontend-backend communication and database integration using Node.js and MongoDB.",
     ],
     contributions: "End-to-end frontend architecture, API integration, and responsive UI system.",
-    github: "https://github.com/kusumasaitummuri",
+    github: "https://github.com/Kusumasai7/Fashion_World",
     demo: null,
   },
   {
@@ -142,7 +142,7 @@ export const PROJECTS = [
       "Applied React Hooks and component-based architecture to deliver a scalable and user-friendly application.",
     ],
     contributions: "Component design, state management with hooks, and local persistence layer.",
-    github: "https://github.com/kusumasaitummuri",
+    github: "https://github.com/Kusumasai7",
     demo: null,
   },
   {
@@ -160,7 +160,7 @@ export const PROJECTS = [
       "Optimized component rendering and state management for efficient performance.",
     ],
     contributions: "API integration layer, async error handling, and interactive UI design.",
-    github: "https://github.com/kusumasaitummuri",
+    github: "https://github.com/Kusumasai7/Weather_podcast",
     demo: null,
   },
 ];

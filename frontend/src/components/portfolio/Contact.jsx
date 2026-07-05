@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PROFILE } from "../../data/resume";
 import { Mail, Phone, MapPin, Send, CheckCircle, AlertTriangle } from "lucide-react";
 
@@ -12,44 +12,6 @@ export const Contact = () => {
 
   const [status, setStatus] = useState("idle"); // idle, sending, success, error
   const [errors, setErrors] = useState({});
-  const [serverActive, setServerActive] = useState(false);
-  const [waking, setWaking] = useState(false);
-
-  // Health check the Express server
-  useEffect(() => {
-    const checkServer = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/health");
-        if (res.ok) {
-          setServerActive(true);
-        } else {
-          setServerActive(false);
-        }
-      } catch (err) {
-        setServerActive(false);
-      }
-    };
-    checkServer();
-    const interval = setInterval(checkServer, 10000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const wakeUpBackend = async () => {
-    setWaking(true);
-    try {
-      const res = await fetch("http://localhost:5000/api/health");
-      if (res.ok) {
-        setServerActive(true);
-      }
-    } catch (err) {
-      console.log("Waking server offline fallback...");
-    } finally {
-      setTimeout(() => {
-        setWaking(false);
-        setServerActive(true); // Simulate activation on fallback
-      }, 1200);
-    }
-  };
 
   const validate = () => {
     const tempErrors = {};
@@ -81,20 +43,33 @@ export const Contact = () => {
     setStatus("sending");
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
+      const accessKey = import.meta.env.VITE_WEB3FORMS_KEY || "YOUR_ACCESS_KEY_HERE";
+      
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }),
       });
 
-      if (response.ok) {
+      const result = await response.json();
+
+      if (response.ok && result.success) {
         setStatus("success");
         setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
-        throw new Error("Server responded with error");
+        throw new Error(result.message || "Failed to submit form");
       }
     } catch (err) {
-      console.warn("Express backend offline, backing up in localStorage", err);
+      console.warn("Web3Forms submission failed, backing up in localStorage", err);
       setTimeout(() => {
         setStatus("success");
         const backups = JSON.parse(localStorage.getItem("portfolio_messages") || "[]");
@@ -276,25 +251,6 @@ export const Contact = () => {
         </div>
       </div>
 
-      {/* Floating Bottom Server Status Banner */}
-      {!serverActive && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[99] pointer-events-auto w-[90%] max-w-xl select-none">
-          <div className="glass border border-accent-brand/20 bg-background/95 backdrop-blur-md rounded-full px-5 py-3 shadow-2xl flex items-center justify-between gap-3 text-xs md:text-sm">
-            <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-yellow-500 animate-pulse shrink-0" />
-              <span className="font-mono text-[10px] text-muted-foreground leading-tight">
-                Frontend Preview. Please wake servers to enable API database functionality.
-              </span>
-            </div>
-            <button
-              onClick={wakeUpBackend}
-              className="px-4 py-2 bg-accent-brand text-accent-brand-text font-black rounded-full uppercase text-[9px] tracking-wider transition-opacity hover:opacity-90 active:scale-95 shrink-0"
-            >
-              {waking ? "Waking..." : "Wake up servers"}
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
